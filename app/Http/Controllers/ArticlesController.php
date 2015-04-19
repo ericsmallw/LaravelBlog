@@ -3,17 +3,20 @@
 use App\Article;
 use App\Http\Requests;
 
-use Request;
+use App\Http\Requests\CreateArticleRequest;
 
 class ArticlesController extends Controller {
-
+    const CONSTANT = 5;
 	public function index(){
-        $articles = Article::latest('published_at')->get();
+        echo "Hey, Honey!";
+        $articles = Article::latest('published_at')->published()->get();
         return view('articles.index', compact('articles'));
     }
 
     public function show($id){
         $article = Article::findOrFail($id);
+
+        dd($article->published_at);
 
         return view('articles.show', compact('article'));
     }
@@ -22,8 +25,13 @@ class ArticlesController extends Controller {
         return view('articles.create');
     }
 
-    public function store(){
-        Article::create(Request::all());
+    /**
+     * @param CreateArticleRequest $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+
+    public function store(CreateArticleRequest $request){
+        Article::create($request->all());
 
         return redirect('articles');
     }
